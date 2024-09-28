@@ -65,3 +65,34 @@ function doMerge(
         mainArray[k++] = auxiliaryArray[j++]
     }
 }
+
+export function getBubbleSortAnimations(array){
+    const animations = []   
+    for(let i=0; i < array.length; i ++){
+        //last i element are already in place
+        for(let j = 0; j< array.length - i - 1; j++){
+            animations.push([j, j+1])//compare
+            animations.push([j, j+1])//revert
+            //checking if item at present iteration is greater than next
+            if(array[j] > array[j+1]){
+                //if true then swap
+                animations.push([j, j+1])
+
+                const temp = array[j]
+                array[j]= array[j+1]
+                array[j+1] = temp
+            } else {
+                //dummy animation if no swap is needed
+                animations.push([-1, -1]) //no swap
+            }
+        }
+    }
+    return animations;
+}
+
+
+
+
+
+
+

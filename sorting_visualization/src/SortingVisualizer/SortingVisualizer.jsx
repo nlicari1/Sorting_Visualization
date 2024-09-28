@@ -1,5 +1,6 @@
 import React from "react";
 import {getMergeSortAnimations} from '../Algorithms/sortingAlgorithms.js';
+import { getBubbleSortAnimations } from "../Algorithms/sortingAlgorithms.js";
 import './SortingVisualizer.css';
 
 //value of speed for animations
@@ -34,8 +35,9 @@ export default class SortingVisualizer extends React.Component {
     this.setState({array});
  } 
  mergeSort() { 
+  // this.setState({isSorting: true}); //disable UI
    const animations = getMergeSortAnimations(this.state.array) // get all merge sort animations
-   for (let i = 0; i<animations.length;i++){ //iterate through animations
+   for (let i = 0; i < animations.length;i++){ //iterate through animations
     const arrayBars = document.getElementsByClassName('array-bar') // when at animation grab new array bar currently in DOM
     const isColorChange = i % 3 !== 2; //check to see if dealing with color change (happens first 2 values for every 3)
     if(isColorChange){
@@ -56,13 +58,50 @@ export default class SortingVisualizer extends React.Component {
         }, i  * ANIMATION_SPEED_MS);
     }
    }
+    /*setTimeout(() => {
+        this.setState({isSorting: false});
+    }, animations.length * ANIMATION_SPEED_MS);*/
  }
 
  quickSort() {}
 
  heapSort() {}
 
- bubbleSort() {}
+ bubbleSort() {
+    //this.setState({isSorting: true}); //disable UI
+    const animations = getBubbleSortAnimations(this.state.array) // get all bubble sort animations
+    for (let i = 0; i < animations.length; i++){ //iterate through animations
+        const arrayBars = document.getElementsByClassName('array-bar') // when at animation grab new array bar currently in DOM
+        const isColorChange = i % 3 !== 2; //check to see if dealing with color change (happens first 2 values for every 3)
+        if(isColorChange){
+            const [barOneIndex, barTwoIndex] = animations[i] // dealing with the 2 bars
+            if(arrayBars[barOneIndex] && arrayBars[barTwoIndex]){ 
+            const barOneStyle = arrayBars[barOneIndex].style // changing the bar colors
+            const barTwoStyle = arrayBars[barTwoIndex].style
+            const color = i % 3 === 0 ? 'blue':'lightcoral';
+            setTimeout(() => {
+                barOneStyle.backgroundColor = color
+                barTwoStyle.backgroundColor = color
+            }, i * ANIMATION_SPEED_MS);
+          }
+        } else {
+            setTimeout(() => {
+            // at % 3 == 2 dealing with overwriting value; values of animation index of bar we are overwriting and new height we give that bar(new value we are overwriting with)
+                const [barOneIndex, barTwoIndex] = animations[i]
+                if(arrayBars[barOneIndex] && arrayBars[barTwoIndex]){ 
+                const barOneStyle = arrayBars[barOneIndex].style
+                const barTwoStyle = arrayBars[barTwoIndex].style
+                const tempHeight = barOneStyle.height
+                barOneStyle.height = barTwoStyle.height;
+                barTwoStyle.height = tempHeight
+              }  
+            }, i  * ANIMATION_SPEED_MS);
+        }
+    }
+    /*setTimeout(() => {
+        this.setState({isSorting: false});
+    }, animations.length * ANIMATION_SPEED_MS);*/
+}
 
  /* testingSortingAlgorithms() { /* iterates random array between 1 - 1000 then push betwen -1000 and 1000 
     for (let i = 0; i < 100; i++) {
@@ -89,11 +128,11 @@ export default class SortingVisualizer extends React.Component {
                 style={{backgroundColor: "lightcoral" ,height: `${value}px`}}>
             </div>
          ))}
-         <button onClick={() => this.resetArray()}>Generate New Array</button>
-         <button onClick={() => this.mergeSort()}>Merge Sort</button>
-         <button onClick={() => this.quickSort()}>Quick Sort</button>
-         <button onClick={() => this.heapSort()}>Heap Sort</button>
-         <button onClick={() => this.bubbleSort()}>Bubble Sort</button>
+         <button onClick={() => this.resetArray()} /*disabled ={this.state.isSorting}*/>Generate New Array</button>
+         <button onClick={() => this.mergeSort()} /*disabled ={this.state.isSorting}*/>Merge Sort</button>
+         <button onClick={() => this.quickSort()} /*disabled ={this.state.isSorting}*/>Quick Sort</button>
+         <button onClick={() => this.heapSort()} /*disabled ={this.state.isSorting}*/>Heap Sort</button>
+         <button onClick={() => this.bubbleSort()} /*disabled ={this.state.isSorting}*/>Bubble Sort</button>
         </div>
     );
  }
