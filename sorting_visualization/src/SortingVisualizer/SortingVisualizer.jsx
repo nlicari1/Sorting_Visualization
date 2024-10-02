@@ -66,32 +66,46 @@ export default class SortingVisualizer extends React.Component {
  }
 
  quickSort() {
+    this.setState({isSorting: true}); //disable UI
    const animations = getQuickSortAnimations(this.state.array) // get all quick sort animations
+   const arrayBars = document.getElementsByClassName('array-bar') // when at animation grab new array bar currently in DOM
    
    for (let i = 0; i < animations.length; i++){ //iterate through animations
-    const arrayBars = document.getElementsByClassName('array-bar') // when at animation grab new array bar currently in DOM
-    const isColorChange = i % 2 === 0; //check to see if dealing with color change (happens first 2 values for every 3)
+    const isColorChange = i % 3 !== 2; 
     if(isColorChange){
-        const [barOneIndex, barTwoIndex] = animations[i] // dealing with the 2 bars
-        const barOneStyle = arrayBars[barOneIndex].style // changing the bar colors
+        const [barOneIndex, barTwoIndex] = animations[i]
+        const barOneStyle = arrayBars[barOneIndex].style 
         const barTwoStyle = arrayBars[barTwoIndex].style
-        const color = i % 4 === 0 ? 'blue':'lightcoral';
+        const color = i % 3 === 0 ? 'blue':'lightcoral';
+
         setTimeout(() => {
-            console.log(`changing color at step ${i}`)
-            barOneStyle.backgroundColor = color
-            barTwoStyle.backgroundColor = color
+            //console.log(`changing color at step ${i}`)
+            //try{
+                barOneStyle.backgroundColor = color
+                barTwoStyle.backgroundColor = color
+            /*} catch (error){
+                console.error("Error changing color:",  error)
+            };*/
         }, i * ANIMATION_SPEED_MS);
     } else {
+        const [barOneIndex, barTwoIndex, newHeightOne, newHeightTwo] = animations[i] 
         setTimeout(() => {
             // at % 3 == 2 dealing with overwriting value; values of animation index of bar we are overwriting and new height we give that bar(new value we are overwriting with)
-            const [barOneIndex, barTwoIndex, newHeightOne, newHeightTwo] = animations[i] 
-            console.log(`Swapping heights at step ${i}`)
-            const barOneStyle = arrayBars[barOneIndex].style
-            const barTwoStyle = arrayBars[barTwoIndex].style
-            barOneStyle.height = `${newHeightOne}px`;
-            barTwoStyle.height = `${newHeightTwo}px`;
+            //console.log(`Swapping heights at step ${i}`)
+            //try{
+                const barOneStyle = arrayBars[barOneIndex].style
+                const barTwoStyle = arrayBars[barTwoIndex].style
+                barOneStyle.height = `${newHeightOne}px`;
+                barTwoStyle.height = `${newHeightTwo}px`;
+
+            /*} catch(error){
+                console.error("Error switching heights:", error)
+            } */
         }, i  * ANIMATION_SPEED_MS);
         }
+        setTimeout(() => {
+            this.setState({isSorting: false})
+        }, animations.length * ANIMATION_SPEED_MS);
     }
 
  }
@@ -161,7 +175,7 @@ export default class SortingVisualizer extends React.Component {
          ))}
          <button onClick={() => this.resetArray()} /*disabled ={this.state.isSorting}*/>Generate New Array</button>
          <button onClick={() => this.mergeSort()} /*disabled ={this.state.isSorting}*/>Merge Sort</button>
-         <button onClick={() => this.quickSort()} /*disabled ={this.state.isSorting}*/>Quick Sort</button>
+         <button onClick={() => this.quickSort()} disabled ={this.state.isSorting}>Quick Sort</button>
          <button onClick={() => this.heapSort()} /*disabled ={this.state.isSorting}*/>Heap Sort</button>
          <button onClick={() => this.bubbleSort()} /*disabled ={this.state.isSorting}*/>Bubble Sort</button>
         </div>
