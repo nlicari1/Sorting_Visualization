@@ -67,15 +67,15 @@ export default class SortingVisualizer extends React.Component {
 
  quickSort() {
    const animations = getQuickSortAnimations(this.state.array) // get all quick sort animations
-   const arrayBars = document.getElementsByClassName('array-bar') // when at animation grab new array bar currently in DOM
-
+   
    for (let i = 0; i < animations.length; i++){ //iterate through animations
-    const isColorChange = i % 3 !== 2; //check to see if dealing with color change (happens first 2 values for every 3)
+    const arrayBars = document.getElementsByClassName('array-bar') // when at animation grab new array bar currently in DOM
+    const isColorChange = i % 2 === 0; //check to see if dealing with color change (happens first 2 values for every 3)
     if(isColorChange){
         const [barOneIndex, barTwoIndex] = animations[i] // dealing with the 2 bars
         const barOneStyle = arrayBars[barOneIndex].style // changing the bar colors
         const barTwoStyle = arrayBars[barTwoIndex].style
-        const color = i % 3 === 0 ? 'blue':'lightcoral';
+        const color = i % 4 === 0 ? 'blue':'lightcoral';
         setTimeout(() => {
             console.log(`changing color at step ${i}`)
             barOneStyle.backgroundColor = color
