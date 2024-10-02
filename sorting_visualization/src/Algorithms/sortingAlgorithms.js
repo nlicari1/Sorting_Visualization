@@ -92,6 +92,49 @@ export function getBubbleSortAnimations(array){
 
 
 
+export function getQuickSortAnimations(array){
+    const animations = []
+    if(array.length <= 1){
+        return array
+    }
+    quickSortHelper(array, 0, array.length -1, animations)
+    return animations
+    
+}
+
+function quickSortHelper(array, lowIndex, highIndex, animations){
+    if(lowIndex >= highIndex) 
+        return;
+    const pivotIndex = partitionQuickSort(array, lowIndex, highIndex, animations);
+    quickSortHelper(array, lowIndex, pivotIndex - 1, animations)
+    quickSortHelper(array, pivotIndex + 1, highIndex, animations);
+}
+
+function partitionQuickSort(array, lowIndex, highIndex, animations){
+    const pivot = array[highIndex]
+    let pivotIndex = lowIndex
+    for(let i = lowIndex; i < highIndex; i++){
+        animations.push([i, highIndex])
+        animations.push([i, highIndex])
+        if(array[i] < pivot){
+            animations.push([i, pivotIndex])
+            swapQuickSort(array, i, pivotIndex)
+            pivotIndex++;
+        }
+    }
+    animations.push([pivotIndex, highIndex])
+    swapQuickSort(array, pivotIndex, highIndex);
+    return pivotIndex;
+
+}
+
+function swapQuickSort(array, index1, index2){
+    const temp = array[index1]
+    array[index1] = array[index2]
+    array[index2] = temp
+}
+
+
 
 
 

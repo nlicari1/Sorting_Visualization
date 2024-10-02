@@ -1,13 +1,14 @@
 import React from "react";
 import {getMergeSortAnimations} from '../Algorithms/sortingAlgorithms.js';
-import { getBubbleSortAnimations } from "../Algorithms/sortingAlgorithms.js";
+import {getBubbleSortAnimations} from "../Algorithms/sortingAlgorithms.js";
+import {getQuickSortAnimations} from "../Algorithms/sortingAlgorithms.js";
 import './SortingVisualizer.css';
 
 //value of speed for animations
-const ANIMATION_SPEED_MS = 3;
+const ANIMATION_SPEED_MS = 100;
 
 // value for number of bars in array
-const NUMBER_OF_ARRAY_BARS = 310;
+const NUMBER_OF_ARRAY_BARS = 10;
 
 
 export default class SortingVisualizer extends React.Component {
@@ -30,10 +31,11 @@ export default class SortingVisualizer extends React.Component {
  resetArray() {
     const array = [];
     for (let i = 0; i < NUMBER_OF_ARRAY_BARS; i++){
-        array.push(randomIntFromInterval(5, 1000));
+        array.push(randomIntFromInterval(5, 500));
     }
     this.setState({array});
  } 
+
  mergeSort() { 
   // this.setState({isSorting: true}); //disable UI
    const animations = getMergeSortAnimations(this.state.array) // get all merge sort animations
@@ -63,7 +65,36 @@ export default class SortingVisualizer extends React.Component {
     }, animations.length * ANIMATION_SPEED_MS);*/
  }
 
- quickSort() {}
+ quickSort() {
+   const animations = getQuickSortAnimations(this.state.array) // get all quick sort animations
+   const arrayBars = document.getElementsByClassName('array-bar') // when at animation grab new array bar currently in DOM
+
+   for (let i = 0; i < animations.length; i++){ //iterate through animations
+    const isColorChange = i % 3 !== 2; //check to see if dealing with color change (happens first 2 values for every 3)
+    if(isColorChange){
+        const [barOneIndex, barTwoIndex] = animations[i] // dealing with the 2 bars
+        const barOneStyle = arrayBars[barOneIndex].style // changing the bar colors
+        const barTwoStyle = arrayBars[barTwoIndex].style
+        const color = i % 3 === 0 ? 'blue':'lightcoral';
+        setTimeout(() => {
+            console.log(`changing color at step ${i}`)
+            barOneStyle.backgroundColor = color
+            barTwoStyle.backgroundColor = color
+        }, i * ANIMATION_SPEED_MS);
+    } else {
+        setTimeout(() => {
+            // at % 3 == 2 dealing with overwriting value; values of animation index of bar we are overwriting and new height we give that bar(new value we are overwriting with)
+            const [barOneIndex, barTwoIndex, newHeightOne, newHeightTwo] = animations[i] 
+            console.log(`Swapping heights at step ${i}`)
+            const barOneStyle = arrayBars[barOneIndex].style
+            const barTwoStyle = arrayBars[barTwoIndex].style
+            barOneStyle.height = `${newHeightOne}px`;
+            barTwoStyle.height = `${newHeightTwo}px`;
+        }, i  * ANIMATION_SPEED_MS);
+        }
+    }
+
+ }
 
  heapSort() {}
 
