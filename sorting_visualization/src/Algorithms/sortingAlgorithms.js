@@ -92,47 +92,109 @@ export function getBubbleSortAnimations(array){
 
 
 
-export function getQuickSortAnimations(array){
-    const animations = []
-    if(array.length <= 1) return array;
-    quickSortHelper(array, 0, array.length - 1, animations)
-    return animations
-    
+export function getQuickSortAnimations(array) {
+    const animations = [];
+    quickSortHelper(array, 0, array.length - 1, animations);
+    return animations;
 }
 
-function quickSortHelper(array, lowIndex, highIndex, animations){
-    if(lowIndex >= highIndex) return;
-    const pivotIndex = partitionQuickSort(array, lowIndex, highIndex, animations);
-    quickSortHelper(array, lowIndex, pivotIndex - 1, animations)
-    quickSortHelper(array, pivotIndex + 1, highIndex, animations);
+function quickSortHelper(array, lowIndex, highIndex, animations) {
+    if (lowIndex < highIndex) {
+        const pivotIndex = partitionQuickSort(array, lowIndex, highIndex, animations);
+        quickSortHelper(array, lowIndex, pivotIndex - 1, animations);
+        quickSortHelper(array, pivotIndex + 1, highIndex, animations);
+    }
 }
 
-function partitionQuickSort(array, lowIndex, highIndex, animations){
-    const pivot = array[highIndex]
-    let pivotIndex = lowIndex
+function partitionQuickSort(array, lowIndex, highIndex, animations) {
+    const pivot = array[highIndex];
+    let pivotIndex = lowIndex - 1;
 
-    for(let i = lowIndex; i < highIndex; i++){
-        animations.push([i, highIndex])
-        if(array[i] < pivot){
-            animations.push([i, pivotIndex, array[i], array[pivotIndex]])
-            swapQuickSort(array, i, pivotIndex)
+    for (let i = lowIndex; i < highIndex; i++) {
+        animations.push([i, highIndex]); // compare with pivot
+        animations.push([i, highIndex])//revert color
+        if (array[i] < pivot) {
             pivotIndex++;
+            animations.push([pivotIndex, array[i]]); // swap
+            animations.push([i, array[pivotIndex]]); // swap
+            
+            //swap
+            const temp = array[pivotIndex]
+            array[pivotIndex] = array[i]
+            array[i] = temp
         }
     }
-    animations.push([pivotIndex, highIndex, array[pivotIndex], array[highIndex]])
-    swapQuickSort(array, pivotIndex, highIndex);
-    return pivotIndex;
+    animations.push([pivotIndex + 1, array[highIndex]]); //swap pivot animation
+    animations.push([highIndex, array[pivotIndex + 1]])//swap pivot animation
+    
+    //swap
+    const temp = array[pivotIndex + 1]
+    array[pivotIndex+1]= array[highIndex]
+    array[highIndex] = temp
 
+    return pivotIndex + 1;
 }
 
-function swapQuickSort(array, index1, index2){
-    const temp = array[index1]
-    array[index1] = array[index2]
-    array[index2] = temp
+export function getHeapSortAnimations(array) {
+    const animations = [];
+    heapHelper(array, animations)
+    return animations
+}
+function heapHelper(array, animations){
+    const length = array.length
+
+    // Build heap
+    for (let i = Math.floor(length / 2) - 1; i >= 0; i--) {
+        heapify(array, length, i, animations);
+    }
+    
+    // Perform heapsort
+    for (let i = length - 1; i > 0; i--) {
+        //animations.push([0, i]); // compare with last element
+        //animations.push([0, i]); // revert color
+        animations.push([0, array[i]]); // push new height for root
+        animations.push([i,array[0]]); // push new height for last element
+       
+        //swap 
+        const temp = array[0]
+        array[0] = array[i]
+        array[i] = temp
+        heapify(array, i, 0, animations);
+    }
+    //return animations;
 }
 
+function heapify(array, length, i, animations) {
+    let largest = i;
+    const left = 2 * i + 1; // Left child index
+    const right = 2 * i + 2; // Right child index
 
+    if (left < length) {
+        //animation for comparing root with left child
+        animations.push([i,left])//compare left child
+        animations.push([i,left])// revert color
+        if(array[left] > array[i]){
+            largest = left;
+        }
+    }
+    if (right < length) {
+        animations.push([i,right])//compare right child
+        animations.push([i,right])// revert color
+        if(array[right] > array[i]){
+            largest = right;
+        }
+    }
+    
+    if (largest !== i) {
+        // animation for swapping the largest element with the root
+        animations.push([i, array[largest]]); // push new height for root
+        animations.push([largest, array[i]]) //push new height for largest
 
-
-
-
+        //swap root with largest child
+        const temp = array[i]
+        array[i]= array[largest]
+        array[largest] = temp
+        //recursively heap subtree
+        heapify(array, length, largest, animations);
+    }
+}
